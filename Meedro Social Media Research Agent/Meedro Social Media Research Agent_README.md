@@ -1,5 +1,5 @@
 ## Meedro Social Media Research Agent
-![Meedro Social Media Research Agent](https://img.shields.io/badge/Latest-0.0.1-blue)
+![Meedro Social Media Research Agent](https://img.shields.io/badge/Latest-3.0.0-blue)
 
 This `n8n AI agent workflow` automates **social media research for TikTok and Instagram** reels and content. It integrates multiple AI models and APIs to fetch user data, analyze video content, rewrite scripts, and log results systematically. The automation revolves around validating incoming requests, querying user records, scraping competitor data, performing AI-powered content analysis, and updating Google Sheets and Airtable with insights and transformed content.
 
