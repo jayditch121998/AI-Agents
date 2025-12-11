@@ -1,5 +1,3 @@
-> ⚠️ Kindly review the docs once more before saving.
-
 ## Meedro Social Media Research Agent
 ![Meedro Social Media Research Agent](https://img.shields.io/badge/Latest-0.0.1-blue)
 
@@ -7,7 +5,6 @@ This `n8n AI agent workflow` automates **social media research for TikTok and In
 
 ![Meedro Social Media Research Agent screenshot](./workflow.png)
 
-> ⚠️ Note: This image is a sample and does not represent the actual workflow
 
 ---
 
@@ -198,29 +195,3 @@ curl -X POST https://your-n8n-url/webhook/a99da4c5-7f9d-4a7b-87e8-61d4a47d91b0 \
 - Inspect Google Drive folder IDs and sharing settings for file uploads.
 
 ---
-
-> ℹ️ This section can be removed once you're fully satisfied with the content
-
-### 📌 Recommended Improvements
-- Rename **"Webhook Record ID"** and **"Webhook Request ID"** nodes to clarify trigger purpose (e.g., "Incoming Request by Record ID", "Incoming Request by Request ID").
-- Consolidate validation nodes into a single reusable validation function node.
-- Add more descriptive names to code nodes (e.g., `"Extract Username from TikTok link"` → `"Parse TikTok Username"`).
-- Use environment variables for credentials instead of hardcoded IDs.
-- Implement retry and timeout parameters uniformly on all external HTTP/AI calls.
-- Create modular subworkflows for TikTok and Instagram processing flows to improve readability.
-- Add comments and documentation within code nodes for complex JS logic.
-- Provide fallback workflow branch for unsupported platforms or empty results.
-- Enhance error messages with error codes for better troubleshooting.
-- Implement unit tests for critical data validation and credit computation nodes.
-- Add optional notification channel (Slack, SMS) alongside Gmail for credit alerts.
-- Include rate limiting checks for API calls based on user credit limits.
-- Create custom node parameter templates for user inputs to simplify job configuration.
-- Log detailed analytics of AI processing time and success rates.
-- Build dashboard views to monitor workflow runs and performance visually.
-- Add more robust handling for non-English languages in transcription and rewriting.
-- Expose feature toggles in workflow to enable/disable rewriting dynamically.
-- Implement deduplication strategies for profiles and video IDs processed.
-- Optimize batch sizes based on system performance and timeouts.
-- Separate media download and upload steps into dedicated reusable nodes.
-
-# END
