@@ -1,0 +1,5946 @@
+{
+  "name": "Meedro Social Media Research Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "run-research",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -2592,
+        1904
+      ],
+      "id": "0ad2b437-37ba-4302-9a92-1ae43884dac0",
+      "name": "Webhook Record ID",
+      "webhookId": "6fca4c1a-4233-4127-92bb-49febd824538"
+    },
+    {
+      "parameters": {
+        "path": "a99da4c5-7f9d-4a7b-87e8-61d4a47d91b0",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -2592,
+        1712
+      ],
+      "id": "6deb8f66-66e1-4ac5-8ffb-a6bfcc107a4f",
+      "name": "Webhook Request ID",
+      "webhookId": "a99da4c5-7f9d-4a7b-87e8-61d4a47d91b0"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the webhook payload\nconst data =$input.first().json.query\n\n// Define validation rules\nconst requiredFields = [\n  \"requestId\",\n];\n\n\n// Collect errors\nconst errors = [];\n\n// Check required fields\nfor (const field of requiredFields) {\n  if (!data[field]) {\n    errors.push(`Missing required field: ${field}`);\n  }\n}\n\n// Return validation result\nif (errors.length > 0) {\n  return [{ json: { status: \"error\", errors } }];\n} else {\n  return [{ json: { status: \"success\", message: \"Validation passed\", \"type\": \"requestId\", data } }];\n}\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2368,
+        1712
+      ],
+      "id": "bf984f81-f40e-489c-88ba-4f5c5c1b91a9",
+      "name": "Validate Request ID"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  item.json.myNewField = 1;\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2368,
+        1904
+      ],
+      "id": "8b221eaf-dfef-4f45-af15-a2607129ce2e",
+      "name": "Validate Record ID"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "6eea0cda-7496-4394-86a8-2035626904fa",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "success",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -2144,
+        1808
+      ],
+      "id": "6a5bf303-33be-42fe-a699-894f6b661b2a",
+      "name": "is valid?"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -1920,
+        1904
+      ],
+      "id": "7f5a3780-4191-4ed6-abc4-95c18b88749c",
+      "name": "Respond invalid"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appJeZWVCDaCZ1okH",
+          "mode": "list",
+          "cachedResultName": "MEEDRO -  Dev",
+          "cachedResultUrl": "https://airtable.com/appJeZWVCDaCZ1okH"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblxk2iLQvWd3yksB",
+          "mode": "list",
+          "cachedResultName": "Meedro Agent",
+          "cachedResultUrl": "https://airtable.com/appJeZWVCDaCZ1okH/tblxk2iLQvWd3yksB"
+        },
+        "filterByFormula": "={Request ID} = \"{{ $('Webhook Request ID').item.json.query.requestId }}\" ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -1696,
+        1520
+      ],
+      "id": "c5b2ba3f-9c3a-4274-b935-42281496ba78",
+      "name": "Search records",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "MhpgyxHvzwCPeDLM",
+          "name": "Airtable Personal Access Token account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.type }}",
+                    "rightValue": "requestId",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "b9632221-9413-4f46-88d8-9031b43cee24"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "150ee159-7466-4a29-9809-21a0c7a1b5c1",
+                    "leftValue": "={{ $json.type }}",
+                    "rightValue": "recordId",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -1920,
+        1712
+      ],
+      "id": "e9623b41-a2a9-4704-ba8b-24f329c5c4cb",
+      "name": "Identify type"
+    },
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "value": "appJeZWVCDaCZ1okH",
+          "mode": "list",
+          "cachedResultName": "MEEDRO -  Dev",
+          "cachedResultUrl": "https://airtable.com/appJeZWVCDaCZ1okH"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblxk2iLQvWd3yksB",
+          "mode": "list",
+          "cachedResultName": "Meedro Agent",
+          "cachedResultUrl": "https://airtable.com/appJeZWVCDaCZ1okH/tblxk2iLQvWd3yksB"
+        },
+        "id": "={{ $json.data.recordId }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -1696,
+        1712
+      ],
+      "id": "4bc2070d-70a7-40e2-9f18-6e82cee0b7c7",
+      "name": "Get a record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "MhpgyxHvzwCPeDLM",
+          "name": "Airtable Personal Access Token account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "let url = null;\nlet reelsLimit = null;\nlet viewsLimit = 10000;\nlet rewrite = false;\nlet brandTone = null;\nlet rewriteSetting = null;\nlet writingStyle = null;\nlet language = \"english\";\nlet googleDriveLink = null;\nlet userId = null;\nlet recordId = null;\nlet members = null;\nlet remaniningCredit = 0;\nlet requestId = null;\nlet notificationEmail = null;\nlet name = null;\n\n// Helper function to extract Drive ID\nfunction extractDriveId(link) {\n  if (!link) return null;\n\n  const patterns = [\n    /\\/file\\/d\\/([^/]+)\\//,              // .../file/d/FILE_ID/view\n    /\\/folders\\/([^/?]+)/,               // .../folders/FOLDER_ID\n    /id=([^&]+)/,                        // ...open?id=FILE_ID\n    /uc\\?id=([^&]+)/                     // ...uc?id=FILE_ID\n  ];\n\n  for (const regex of patterns) {\n    const match = link.match(regex);\n    if (match && match[1]) {\n      return match[1];\n    }\n  }\n\n  return null;\n}\n\n// Loop through all input items\nfor (const item of items) {\n  if (item.json[\"Google Sheet Link\"]) {\n    url = item.json[\"Google Sheet Link\"];\n    reelsLimit = item.json[\"Reels Limit\"];\n    viewsLimit = item.json[\"Min Reel Views\"];\n    rewrite = item.json[\"Rewrite\"] ?? false;\n    brandTone = item.json[\"Brand Tone\"] ?? null;\n    rewriteSetting = item.json[\"Rewrite Setting\"] ?? null;\n    writingStyle = item.json[\"Writing Style\"] ?? null;\n    language = item.json[\"Language\"] ?? \"english\";\n    userId = item.json[\"User ID\"];\n    recordId = item.json[\"id\"];\n    requestId = item.json[\"Request ID\"];\n    members = item.json[\"Members\"] ?? null;\n    remaniningCredit = item.json[\"Remaining Credits\"] ?? null;\n    googleDriveLink = extractDriveId(item.json[\"Google Drive Link\"]) ?? null;\n    notificationEmail = item.json[\"Notification Email\"] ?? null;\n    name = item.json[\"Name\"] ?? null;\n    break; // stop at the first one found\n  }\n}\n\n// If no URL found, return null\nreturn [\n  { json: \n    { \n      sheetUrl: url,\n      reelsLimit: reelsLimit,\n      viewsLimit: viewsLimit,\n      rewrite: rewrite,\n      brandTone: brandTone,\n      rewriteSetting: rewriteSetting,\n      writingStyle: writingStyle,\n      language: language,\n      googleDriveLink: googleDriveLink,\n      userId: userId,\n      recordId: recordId,\n      members: members,\n      remaniningCredit: remaniningCredit,\n      requestId: requestId,\n      notificationEmail: notificationEmail,\n      name: name,\n    } \n  }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1472,
+        1712
+      ],
+      "id": "3046f723-1d72-4f76-8e82-dbda5efb6771",
+      "name": "Get Important Details"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $json.sheetUrl }}",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 69853265,
+          "mode": "list",
+          "cachedResultName": "Competitors",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uhzxD5GyX69rG4ZDl5k9eQEEtWbXxpP5LOqwWClGNtk/edit#gid=69853265"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Track Creator",
+              "lookupValue": "true"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1248,
+        1712
+      ],
+      "id": "d8d98cbe-c92c-4498-8c49-c770ec1b2c0b",
+      "name": "Get Competitor/s",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "K7ilmsrPH8LOXJbe",
+          "name": "Jayditch Google sheet"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const rewriteTotal = items.length * 2;\nconst analyzeTotal = items.length * 6;\nconst possibleCreditToBeUsed = analyzeTotal + ($('Get Important Details').first().json.rewrite ? rewriteTotal : 0);\nconst remaningCredit = $(\"Get Important Details\").first().json\n  .remaniningCredit[0];\n\nif (possibleCreditToBeUsed > remaningCredit) {\n  return {\n    passed: false,\n    possibleCreditToBeUsed: possibleCreditToBeUsed,\n    remaningCredit: remaningCredit,\n    data: items,\n  };\n}\n\nreturn items;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1024,
+        1712
+      ],
+      "id": "dbfb7752-7eeb-42a6-86a9-21494f741600",
+      "name": "Compute Credits"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a87bf56f-1873-42fd-a6ed-19c046a67dc0",
+              "leftValue": "={{ $json.passed }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -800,
+        1712
+      ],
+      "id": "67fa21b7-7e18-4737-bd98-18729cd686cf",
+      "name": "Validate Credits"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Get Important Details').item.json.notificationEmail }}",
+        "subject": "Insufficient credit",
+        "message": "=<p>Hello {{ $('Get Important Details').item.json.name }},</p>\n\n<p>\n  We attempted to process your recent request, but it could not be completed\n  due to <strong>insufficient credits</strong>.\n</p>\n\n<p>\n  Kindly top up your credits to continue using the service without\n  interruption.\n</p>\n\n<p>\n  If you need assistance, feel free to reach out to our support team.\n</p>\n\n<p>\n  Best regards,<br />\n  <strong>Meedro Agent</strong>\n</p>\n",
+        "options": {
+          "appendAttribution": false,
+          "bccList": "jayditch.b@gmail.com, angelicaalulod@gmail.com"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -832,
+        2256
+      ],
+      "id": "67956bc0-99a9-41a8-a714-1cfaa87bea47",
+      "name": "Send a message - not enough credit",
+      "webhookId": "a5aa1a2c-d6e0-4acb-85d9-e84f2a3fbab2",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "48wxmOvgzefbVEQN",
+          "name": "Gmail account [Jayditch]"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appJeZWVCDaCZ1okH",
+          "mode": "list",
+          "cachedResultName": "MEEDRO -  Dev",
+          "cachedResultUrl": "https://airtable.com/appJeZWVCDaCZ1okH"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblG5F1KOpobuMPC2",
+          "mode": "list",
+          "cachedResultName": "Meedro Agent Audit Log",
+          "cachedResultUrl": "https://airtable.com/appJeZWVCDaCZ1okH/tblG5F1KOpobuMPC2"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Run ID": "{{ $execution.id }}",
+            "Status": "Error",
+            "Request ID": "[\"{{ $('Get Important Details').item.json.recordId }}\"]",
+            "Description": "Not enough credit limit"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Run ID",
+              "displayName": "Run ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Error",
+                  "value": "Error"
+                },
+                {
+                  "name": "In Review",
+                  "value": "In Review"
+                },
+                {
+                  "name": "Resolved",
+                  "value": "Resolved"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Request ID",
+              "displayName": "Request ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "User ID",
+              "displayName": "User ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Notification Email",
+              "displayName": "Notification Email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Google Sheet Link",
+              "displayName": "Google Sheet Link",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Sheet Status",
+              "displayName": "Sheet Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Active Plan",
+              "displayName": "Active Plan",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Members",
+              "displayName": "Members",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -832,
+        1984
+      ],
+      "id": "6f6b074c-4003-405b-9e44-1edfe6bf9837",
+      "name": "Create a record - not enough credit limit",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "MhpgyxHvzwCPeDLM",
+          "name": "Airtable Personal Access Token account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -576,
+        1408
+      ],
+      "id": "c6f6a222-594d-49a9-834e-20fd580f8460",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.authorMeta.originalAvatarUrl }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1392,
+        560
+      ],
+      "id": "6b6ac928-adfc-4b1f-a2b1-107645ebf110",
+      "name": "Download profile picture",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "name": "=profile_picture_ $json.id }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Get Important Details').item.json.googleDriveLink }}"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2080,
+        560
+      ],
+      "id": "ece0a31d-6123-4477-9274-178c7bb2d28b",
+      "name": "Upload Profile Picture",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "oICXEPJ2yTPSAFUF",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Get Important Details').item.json.sheetUrl }}",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 69853265,
+          "mode": "list",
+          "cachedResultName": "Competitors",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tMeBWJ8yMsoyOIhRZ20_OGVHreV9JtF_7ZVhYLWPDZQ/edit#gid=69853265"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Profile Link": "={{ $('Extract Username from TikTok link').item.json['Profile Link'] }}",
+            "Username": "=@{{ $('Get Reels').item.json.authorMeta.name }}",
+            "Name": "={{ $('Get Reels').item.json.authorMeta.name }}",
+            "Bio": "={{$('Get Reels').item.json.authorMeta.bioLink ?? \"N/A\" }}",
+            "Followers": "={{ $('Get Reels').item.json.authorMeta.fans }}",
+            "Following": "={{ $('Get Reels').item.json.authorMeta.following }}",
+            "Media Count": "={{ $('Get Reels').item.json.authorMeta.video }}",
+            "Profile Picture": "==IMAGE(\"{{ $json.webContentLink }}\", 4, 80, 80)"
+          },
+          "matchingColumns": [
+            "Profile Link"
+          ],
+          "schema": [
+            {
+              "id": "Profile Picture",
+              "displayName": "Profile Picture",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Username",
+              "displayName": "Username",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Bio",
+              "displayName": "Bio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Followers",
+              "displayName": "Followers",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Following",
+              "displayName": "Following",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Media Count",
+              "displayName": "Media Count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Profile Link",
+              "displayName": "Profile Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Last Post Date",
+              "displayName": "Last Post Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Track Creator",
+              "displayName": "Track Creator",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        2544,
+        560
+      ],
+      "id": "8abaf191-f4b3-487e-b408-43a075048be8",
+      "name": "Update latest info competitors",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "K7ilmsrPH8LOXJbe",
+          "name": "Jayditch Google sheet"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "Run actor and get dataset",
+        "actorId": {
+          "__rl": true,
+          "value": "GdWCkxBtKWOsKjdch",
+          "mode": "list",
+          "cachedResultName": "TikTok Scraper (clockworks/tiktok-scraper)",
+          "cachedResultUrl": "https://console.apify.com/actors/GdWCkxBtKWOsKjdch/input"
+        },
+        "customBody": "={\n\n    \"resultsPerPage\": {{ $('Get Important Details').item.json.reelsLimit }},\n    \"profiles\": [\"{{ $json.extratedUsername }}\"],\n    \"profileScrapeSections\": [\n        \"videos\"\n    ],\n    \"profileSorting\": \"latest\",\n    \"excludePinnedPosts\": false,\n    \"searchSection\": \"\",\n    \"maxProfilesPerQuery\": 10,\n    \"scrapeRelatedVideos\": false,\n    \"shouldDownloadVideos\": false,\n    \"shouldDownloadCovers\": false,\n    \"shouldDownloadSubtitles\": false,\n    \"shouldDownloadSlideshowImages\": false,\n    \"shouldDownloadAvatars\": false,\n    \"shouldDownloadMusicCovers\": false,\n    \"proxyCountryCode\": \"None\",\n    \"oldestPostDateUnified\": \"{{ $('Get Competitor/s').item.json['Last Post Date'] }}\"\n}",
+        "timeout": 300
+      },
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        720,
+        720
+      ],
+      "id": "ae91713d-06a8-4b6a-84f5-05e4de92cf98",
+      "name": "Get Reels",
+      "retryOnFail": true,
+      "executeOnce": false,
+      "credentials": {
+        "apifyApi": {
+          "id": "J83Y7i4pDuFFO7GI",
+          "name": "Apify account [j.balansi]"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "965cfaa7-b416-4dbc-9e94-fe0fa9c1dce5",
+              "leftValue": "={{$json}}",
+              "rightValue": "test",
+              "operator": {
+                "type": "object",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1600,
+        848
+      ],
+      "id": "e5b9359c-d360-4d53-8cc5-68a32a18e8ab",
+      "name": "Check if empty"
+    },
+    {
+      "parameters": {
+        "sortFieldsUi": {
+          "sortField": [
+            {
+              "fieldName": "playCount",
+              "order": "descending"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.sort",
+      "typeVersion": 1,
+      "position": [
+        1808,
+        864
+      ],
+      "id": "e8c24dc7-009a-4d24-9fdc-1e5c5dfde84b",
+      "name": "Sort reels by views"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.videoMeta.coverUrl }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2064,
+        752
+      ],
+      "id": "dd8f30b3-a0fe-4d1f-904c-7145a34fafee",
+      "name": "Download Thumbnail"
+    },
+    {
+      "parameters": {
+        "name": "=thumbnail_{{ $json.id }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Get Important Details').item.json.googleDriveLink }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2272,
+        752
+      ],
+      "id": "20fd9fb0-6344-4449-821b-5c922dda2999",
+      "name": "Upload Thumbnail",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "oICXEPJ2yTPSAFUF",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-pro",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-pro"
+        },
+        "text": "=# ROLE\nYou are a social media content analyst who understands Instagram/TikTok format videos.\n\n# TASK\nWatch this video and extract a raw content breakdown that captures what makes this video work.\n\n# INSTRUCTIONS\n\nSTEP 1: Identify the video format\n- Does the video have a VISUAL STRUCTURE (split screen, side-by-side comparison, grid layout, before/after)?\n- If YES → This is visual-driven, describe the structure FIRST\n- Does the video have a COMEDIC/MEME TEXT OVERLAY that frames the joke or concept?\n- If YES → This is meme-format, put the text overlay FIRST\n\nSTEP 2: Format your breakdown accordingly\n\nFor VISUAL COMPARISON/STRUCTURE videos (split screens, side-by-side, progressions):\n- START with overall visual structure description (e.g., \"Three-way split screen with...\")\n- Then provide dialogue and visual details for each section\n\nFormat:\n[Overall visual structure: describe the layout/format]\n\n\"Dialogue line 1\"\n[Visual details for this segment]\n\n\"Dialogue line 2\"\n[Visual details for this segment]\n\nFor SCRIPT-DRIVEN videos (someone talking, no visual structure):\n- Transcribe the spoken words\n- Include visual descriptions only as supporting context\n\nFormat:\n\"Transcribe the narration...\"\n[Visual descriptions as context]\n\nFor VISUAL MONTAGE videos (cinematic shots, lifestyle content):\n- Describe shot-by-shot\n- Note on-screen text overlays\n- Mark background audio: Audio: [song playing] or Audio: [trending sound]\n\nFormat:\n[Shot 1 description]\nText: \"any on-screen text\"\n[Shot 2 description]\nAudio: [background audio description]\n\nFor MEME/COMEDY FORMAT videos (text overlay framing a joke/concept):\n- START with the text overlay\n- Then describe the visual content and audio\n\nFormat:\nText: \"the meme caption or comedic framing\"\n\n[Visual description of what's happening]\nAudio: [background audio description]\n\nCRITICAL: Distinguish between actual content and background audio:\n- Generic motivational speech/trending sounds disconnected from visuals → background audio\n- Song lyrics → background music\n- Specific narration explaining what's shown → main content\n- Audio directly referencing on-screen elements → main content\n\n# OUTPUT CONSTRAINTS\n- Target output ~2000 characters (prioritize only the most important elements)\n- Plain text, no timestamps\n- No commentary, just content breakdown\n- Capture what actually makes the video engaging\n\n# OUTPUT FORMAT\nStart immediately with the breakdown",
+        "videoUrls": "={{ $json.webVideoUrl }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        2064,
+        976
+      ],
+      "id": "c6ad9c30-fdd5-4815-8ef7-ba3d0961c389",
+      "name": "Transcribe Video",
+      "retryOnFail": true,
+      "waitBetweenTries": 1000,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Ll7p0AxVQUk8XfMS",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=<instructions>\nYour task is to identify the TRUE HOOK of a video - what makes someone STOP SCROLLING.\n\nHOW TO IDENTIFY THE HOOK:\n\nCheck these in order:\n1. **Text overlay at the start?** → That's usually the hook (especially meme/comedy formats)\n2. **Visual structure throughout?** (split screen, comparison, before/after) → That structure is the hook\n3. **Someone talking with no text or structure?** → Opening statement is the hook\n\nUse common sense: What grabs attention first?\n\nIGNORE:\n- Background music/trending sounds that don't relate to the content\n- Generic audio over visual comparisons\n\nIf transcript is empty or failed, output a single space: \" \"\n</instructions>\n\n<examples>\nExample 1 - Text overlay meme format:\nText: \"I goon to ur IG highlights lemme eyp\"\n[Person tosses volleyball into pool]\nAudio: [trending song]\n\nI goon to ur IG highlights lemme eyp\n\nPower Words: goon, IG highlights, absurdist humor\n\n---\n\nExample 2 - Text overlay comedy format:\nText: \"NEVER let a white boy get a little motion 😭😭\"\n[Guy lip-syncing to rap with money]\nAudio: [rap song]\n\nNEVER let a white boy get a little motion\n\nPower Words: white boy, motion, comedic commentary\n\n---\n\nExample 3 - Visual comparison structure:\nThree-way split screen with \"10K followers\", \"100K followers\", \"1M followers\"\nSame person with different production quality in each section\nAudio: [generic speech about identity - not related to visuals]\n\nVisual comparison: Creator content quality evolution from 10K followers (basic setup) to 100K followers (more intensity) to 1M followers (professional production)\n\nPower Words: 10K → 100K → 1M, evolution, professional production\n\n---\n\nExample 4 - Script-driven with bold claim:\n\"I just replaced my $30 thumbnail editor with ChatGPT in 5 mins.\"\n[Shows thumbnail examples]\n\nI just replaced my $30 thumbnail editor with ChatGPT in 5 mins.\n\nPower Words: replaced $30 editor, ChatGPT, 5 mins\n\n---\n\nExample 5 - Script-driven with money claim:\n\"ChatGPT's Sora 2 is kind of insane. I've been using it to make these AI videos of cats at cash registers, and I've been able to make over $8,000 literally every single week by posting them on TikTok.\"\n[Screen recordings of earnings and AI generation]\n\nChatGPT's Sora 2 is kind of insane. I've been using it to make these AI videos of cats at cash registers, and I've been able to make over $8,000 literally every single week by posting them on TikTok.\n\nPower Words: $8,000 every single week, AI videos, ChatGPT's Sora 2\n\n---\n\nExample 6 - Visual comparison with categories:\nSplit screen: \"IMPORTANT\" (green) vs \"NOT IMPORTANT\" (red)\nPerson categorizes social media strategies into each side throughout video\n\nVisual comparison: Social media strategies categorized as IMPORTANT vs. NOT IMPORTANT using split-screen format\n\nPower Words: important vs. not important, social media strategies\n\n---\n\nExample 7 - Text overlay establishing concept:\nText: \"Ranking the WORST Business Models\"\n[Tier-by-tier breakdown with commentary follows]\n\nRanking the WORST Business Models\n\nPower Words: WORST, Business Models, Ranking\n</examples>\n\n<output_format>\nOutput EXACTLY 3 lines:\n\nLine 1: The hook\nLine 2: (blank)\nLine 3: Power Words: [words]\n\nSTOP after line 3. No explanations. No conversations. No extra text.\n</output_format>\n\n<input>\n{{ $json.content?.parts?.[0]?.text ?? \"transcript failed :/\" }}\n</input>",
+        "hasOutputParser": true,
+        "needsFallback": true,
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        2480,
+        1088
+      ],
+      "id": "0aaced23-3d5b-4ff8-8dab-0d1ac3903dc0",
+      "name": "Hook Analyzer1",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        2464,
+        1344
+      ],
+      "id": "4a4ad672-28c3-4644-b8e4-dd1f5689f7fd",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Ll7p0AxVQUk8XfMS",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        2592,
+        1344
+      ],
+      "id": "ade908b9-0929-46be-b548-9841180bda9a",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "xQPTRvcS0aBdlnaa",
+          "name": "Meedro Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const reelsCount = $('Get Reels').all().length;\nconst reelsAnalyzed = $('Loop Over Items').all();\nlet successAnalyzedCount = 0;\n\nfor (const item of reelsAnalyzed) {\n  if (item.json[\"Rewrite Script\"] && item.json[\"Rewrite Script\"] !== \"Can't analyze less than 100 characters\") {\n    successAnalyzedCount++;\n  }\n}\n\nreturn [{\n  json: {\n    totalReels: reelsCount,\n    analyzed: successAnalyzedCount\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -608,
+        368
+      ],
+      "id": "ef08399a-d0b9-48a1-875a-7627dd500851",
+      "name": "summarize"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appJeZWVCDaCZ1okH",
+          "mode": "list",
+          "cachedResultName": "MEEDRO -  Dev",
+          "cachedResultUrl": "https://airtable.com/appJeZWVCDaCZ1okH"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblskg4bYFV6AW4xx",
+          "mode": "list",
+          "cachedResultName": "Meedro Agent Run Log",
+          "cachedResultUrl": "https://airtable.com/appJeZWVCDaCZ1okH/tblskg4bYFV6AW4xx"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Run ID": "={{ $execution.id }}",
+            "Total Reels Analyze": "={{ $json.analyzed }}",
+            "Total Rewrite Script": "={{ $json.analyzed }}",
+            "Request ID": "=[\"{{ $('Get Important Details').first().json.recordId }}\"]",
+            "Process Type": "Schedule",
+            "Status": "Completed",
+            "Date Finished": "={{ $now }}",
+            "Meedro Members": "={{ $('Get Important Details').first().json.members }}",
+            "Total Reels Fetch": "={{ $json.analyzed }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Run ID",
+              "displayName": "Run ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "User ID",
+              "displayName": "User ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Meedro Members",
+              "displayName": "Meedro Members",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Request ID",
+              "displayName": "Request ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Notification Email",
+              "displayName": "Notification Email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Process Type",
+              "displayName": "Process Type",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Run Now",
+                  "value": "Run Now"
+                },
+                {
+                  "name": "Validation",
+                  "value": "Validation"
+                },
+                {
+                  "name": "Schedule",
+                  "value": "Schedule"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Google Sheet Link",
+              "displayName": "Google Sheet Link",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Plan",
+              "displayName": "Plan",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Total Reels Fetch",
+              "displayName": "Total Reels Fetch",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Total Reels Analyze",
+              "displayName": "Total Reels Analyze",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Total Rewrite Script",
+              "displayName": "Total Rewrite Script",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Completed",
+                  "value": "Completed"
+                },
+                {
+                  "name": "Failed",
+                  "value": "Failed"
+                },
+                {
+                  "name": "Insufficient Credits",
+                  "value": "Insufficient Credits"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Date Finished",
+              "displayName": "Date Finished",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Total Credit Used",
+              "displayName": "Total Credit Used",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Credit Limit",
+              "displayName": "Credit Limit",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Reserve Credit",
+              "displayName": "Reserve Credit",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Reserved?",
+              "displayName": "Reserved?",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Used Reserved",
+              "displayName": "Used Reserved",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Used Unreserved",
+              "displayName": "Used Unreserved",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Remaining Credits",
+              "displayName": "Remaining Credits",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Cycle Start",
+              "displayName": "Cycle Start",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Cycle End",
+              "displayName": "Cycle End",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "In Current Cycle",
+              "displayName": "In Current Cycle",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Credit Used (This Cycle)",
+              "displayName": "Credit Used (This Cycle)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -400,
+        368
+      ],
+      "id": "64aefc32-78b8-45cd-8afd-50082de9ed25",
+      "name": "Create a record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "MhpgyxHvzwCPeDLM",
+          "name": "Airtable Personal Access Token account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1ec7e27b-7734-4b53-bf5e-7a7e05f5028e",
+              "leftValue": "={{ $('Get Important Details').item.json.rewrite }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -848,
+        528
+      ],
+      "id": "c90de41d-b56f-4b5e-9999-2685cb417508",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "jsCode": "const reelsCount = $('Get Reels').all().length;\nconst reelsAnalyzed = $('Loop Over Items').all();\nlet successAnalyzedCount = 0;\n\nfor (const item of reelsAnalyzed) {\n  if (item.json[\"Hook\"] && item.json[\"Hook\"] !== \"Can't analyze less than 100 characters\") {\n    successAnalyzedCount++;\n  }\n}\n\nreturn [{\n  json: {\n    totalReels: reelsCount,\n    analyzed: successAnalyzedCount\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -608,
+        656
+      ],
+      "id": "a039c0d8-9d50-4dd2-aea0-c30e6df826c9",
+      "name": "summarize1"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appJeZWVCDaCZ1okH",
+          "mode": "list",
+          "cachedResultName": "MEEDRO -  Dev",
+          "cachedResultUrl": "https://airtable.com/appJeZWVCDaCZ1okH"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblskg4bYFV6AW4xx",
+          "mode": "list",
+          "cachedResultName": "Meedro Agent Run Log",
+          "cachedResultUrl": "https://airtable.com/appJeZWVCDaCZ1okH/tblskg4bYFV6AW4xx"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Run ID": "={{ $execution.id }}",
+            "Total Reels Analyze": "={{ $json.analyzed }}",
+            "Total Rewrite Script": "=0",
+            "Request ID": "=[\"{{ $('Get Important Details').first().json.recordId }}\"]",
+            "Process Type": "Schedule",
+            "Status": "Completed",
+            "Date Finished": "={{ $now }}",
+            "Meedro Members": "={{ $('Get Important Details').first().json.members }}",
+            "Total Reels Fetch": "={{ $json.analyzed }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Run ID",
+              "displayName": "Run ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "User ID",
+              "displayName": "User ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Meedro Members",
+              "displayName": "Meedro Members",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Request ID",
+              "displayName": "Request ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Notification Email",
+              "displayName": "Notification Email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Process Type",
+              "displayName": "Process Type",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Run Now",
+                  "value": "Run Now"
+                },
+                {
+                  "name": "Validation",
+                  "value": "Validation"
+                },
+                {
+                  "name": "Schedule",
+                  "value": "Schedule"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Google Sheet Link",
+              "displayName": "Google Sheet Link",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Plan",
+              "displayName": "Plan",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Total Reels Fetch",
+              "displayName": "Total Reels Fetch",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Total Reels Analyze",
+              "displayName": "Total Reels Analyze",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Total Rewrite Script",
+              "displayName": "Total Rewrite Script",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Completed",
+                  "value": "Completed"
+                },
+                {
+                  "name": "Failed",
+                  "value": "Failed"
+                },
+                {
+                  "name": "Insufficient Credits",
+                  "value": "Insufficient Credits"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Date Finished",
+              "displayName": "Date Finished",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Total Credit Used",
+              "displayName": "Total Credit Used",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Credit Limit",
+              "displayName": "Credit Limit",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Reserve Credit",
+              "displayName": "Reserve Credit",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Reserved?",
+              "displayName": "Reserved?",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Used Reserved",
+              "displayName": "Used Reserved",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Used Unreserved",
+              "displayName": "Used Unreserved",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Remaining Credits",
+              "displayName": "Remaining Credits",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Cycle Start",
+              "displayName": "Cycle Start",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Cycle End",
+              "displayName": "Cycle End",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "In Current Cycle",
+              "displayName": "In Current Cycle",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Credit Used (This Cycle)",
+              "displayName": "Credit Used (This Cycle)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -384,
+        656
+      ],
+      "id": "30b38a77-6c4d-4a1b-8005-1c037ce3db44",
+      "name": "Create a record2",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "MhpgyxHvzwCPeDLM",
+          "name": "Airtable Personal Access Token account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appJeZWVCDaCZ1okH",
+          "mode": "list",
+          "cachedResultName": "MEEDRO -  Dev",
+          "cachedResultUrl": "https://airtable.com/appJeZWVCDaCZ1okH"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblxk2iLQvWd3yksB",
+          "mode": "list",
+          "cachedResultName": "Meedro Agent",
+          "cachedResultUrl": "https://airtable.com/appJeZWVCDaCZ1okH/tblxk2iLQvWd3yksB"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Schedule Status": "Done",
+            "id": "={{ $('Get Important Details').first().json.recordId }}",
+            "Run Now": false
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Request ID",
+              "displayName": "Request ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Members",
+              "displayName": "Members",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "User ID",
+              "displayName": "User ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Username",
+              "displayName": "Username",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Google Sheet Link",
+              "displayName": "Google Sheet Link",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Google Drive Link",
+              "displayName": "Google Drive Link",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Sheet Status",
+              "displayName": "Sheet Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Active",
+                  "value": "Active"
+                },
+                {
+                  "name": "Pending Validation",
+                  "value": "Pending Validation"
+                },
+                {
+                  "name": "Stop",
+                  "value": "Stop"
+                },
+                {
+                  "name": "Failed Validation",
+                  "value": "Failed Validation"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Notification Email",
+              "displayName": "Notification Email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Day",
+              "displayName": "Day",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Monday",
+                  "value": "Monday"
+                },
+                {
+                  "name": "Tuesday",
+                  "value": "Tuesday"
+                },
+                {
+                  "name": "Wednesday",
+                  "value": "Wednesday"
+                },
+                {
+                  "name": "Thursday",
+                  "value": "Thursday"
+                },
+                {
+                  "name": "Friday",
+                  "value": "Friday"
+                },
+                {
+                  "name": "Saturday",
+                  "value": "Saturday"
+                },
+                {
+                  "name": "Sunday",
+                  "value": "Sunday"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Time",
+              "displayName": "Time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Reels Limit",
+              "displayName": "Reels Limit",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Min Reel Views",
+              "displayName": "Min Reel Views",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Rewrite",
+              "displayName": "Rewrite",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Rewrite Setting",
+              "displayName": "Rewrite Setting",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Language",
+              "displayName": "Language",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Run Now",
+              "displayName": "Run Now",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Run Limit Per Month",
+              "displayName": "Run Limit Per Month",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Once",
+                  "value": "Once"
+                },
+                {
+                  "name": "Twice",
+                  "value": "Twice"
+                },
+                {
+                  "name": "Three Times",
+                  "value": "Three Times"
+                },
+                {
+                  "name": "Four Times",
+                  "value": "Four Times"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Run Limit Status",
+              "displayName": "Run Limit Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Schedule Status",
+              "displayName": "Schedule Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Not Yet Started",
+                  "value": "Not Yet Started"
+                },
+                {
+                  "name": "In Progress",
+                  "value": "In Progress"
+                },
+                {
+                  "name": "Paused",
+                  "value": "Paused"
+                },
+                {
+                  "name": "Done",
+                  "value": "Done"
+                },
+                {
+                  "name": "Failed",
+                  "value": "Failed"
+                },
+                {
+                  "name": "Stopped",
+                  "value": "Stopped"
+                },
+                {
+                  "name": "Validating",
+                  "value": "Validating"
+                },
+                {
+                  "name": "Validated",
+                  "value": "Validated"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Run-time Expiry Date",
+              "displayName": "Run-time Expiry Date",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Active Plan",
+              "displayName": "Active Plan",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Plan Status",
+              "displayName": "Plan Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Active",
+                  "value": "Active"
+                },
+                {
+                  "name": "No Active Plan",
+                  "value": "No Active Plan"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Monthly Run Limit",
+              "displayName": "Monthly Run Limit",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Runs Used",
+              "displayName": "Runs Used",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Credit Limit",
+              "displayName": "Credit Limit",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Reserve Credit",
+              "displayName": "Reserve Credit",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Credit Used Per Sheet",
+              "displayName": "Credit Used Per Sheet",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Credit Used Per User",
+              "displayName": "Credit Used Per User",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Remaining Credits",
+              "displayName": "Remaining Credits",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Unreserved Remaining (User)",
+              "displayName": "Unreserved Remaining (User)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Reserved?",
+              "displayName": "Reserved?",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Counts Toward Reserve",
+              "displayName": "Counts Toward Reserve",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "In Current Cycle",
+              "displayName": "In Current Cycle",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Last Run At",
+              "displayName": "Last Run At",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Now",
+              "displayName": "Now",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Next Run At",
+              "displayName": "Next Run At",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Due Now",
+              "displayName": "Due Now",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Created Time",
+              "displayName": "Created Time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Plan Registered Date",
+              "displayName": "Plan Registered Date",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Cycle Start",
+              "displayName": "Cycle Start",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Cycle End",
+              "displayName": "Cycle End",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Meedro Agent Run Log",
+              "displayName": "Meedro Agent Run Log",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Remaining Credits - old Version",
+              "displayName": "Remaining Credits - old Version",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Counts Toward Reserve OLD",
+              "displayName": "Counts Toward Reserve OLD",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Next Run At (UTC) - backup",
+              "displayName": "Next Run At (UTC) - backup",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Meedro Agent Audit Log",
+              "displayName": "Meedro Agent Audit Log",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -176,
+        528
+      ],
+      "id": "f77e5175-b4ac-4265-b8d7-f52fc40ce692",
+      "name": "Update record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "MhpgyxHvzwCPeDLM",
+          "name": "Airtable Personal Access Token account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"hook\": \"[insert hook]\",\n  \"power_words\": [\"word or phrase 1\", \"word or phrase 2\", \"word or phrase 3\"],\n  \"topic\": \"[insert topic]\",\n  \"cta\": \"[insert CTA or \\\"None\\\"]\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        2720,
+        1344
+      ],
+      "id": "ba296ec7-b1cd-424f-9d89-6c9c5ab1476b",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "numberInputs": 4,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2944,
+        736
+      ],
+      "id": "bc23d2cc-66ba-4137-8253-69ce985d4aae",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8f29f01f-fa89-4a6c-8ed9-9b216dd722a8",
+              "name": "caption",
+              "value": "={{ $('Sort reels by views').item.json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "4a82add2-86aa-418b-a8dc-bbfb809f658e",
+              "name": "url",
+              "value": "={{ $('Sort reels by views').item.json.webVideoUrl }}",
+              "type": "string"
+            },
+            {
+              "id": "c9f9b9a0-d960-4411-b5cc-b3c14f446f95",
+              "name": "thumbnail",
+              "value": "={{ $json.webContentLink }}",
+              "type": "string"
+            },
+            {
+              "id": "43d1ad8f-f704-4cf6-84b0-9cad874c87d7",
+              "name": "views",
+              "value": "={{ $('Sort reels by views').item.json.playCount }}",
+              "type": "number"
+            },
+            {
+              "id": "282f8501-f8e7-46ed-9b53-4b6a57e312ca",
+              "name": "likes",
+              "value": "={{ $('Sort reels by views').item.json.diggCount }}",
+              "type": "number"
+            },
+            {
+              "id": "60cf95cd-8cf3-4e53-a9f8-879c1abbcfac",
+              "name": "comments",
+              "value": "={{ $('Sort reels by views').item.json.commentCount }}",
+              "type": "string"
+            },
+            {
+              "id": "883ee975-e482-4db1-bbea-c30c3dd388fb",
+              "name": "post_date",
+              "value": "={{ $('Sort reels by views').item.json.createTimeISO.split(\"T\")[0] }}",
+              "type": "string"
+            },
+            {
+              "id": "166ea6c5-af29-4e31-8a99-586423dcc266",
+              "name": "video_id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "ad4d6812-b2df-4f59-b2f7-ad0da3305de3",
+              "name": "username",
+              "value": "={{ $('Sort reels by views').item.json.authorMeta.name }}",
+              "type": "string"
+            },
+            {
+              "id": "74cdc215-6564-41fc-b0c4-c3bfb68ae554",
+              "name": "duration",
+              "value": "={{ $('Sort reels by views').item.json.videoMeta.duration }}",
+              "type": "string"
+            },
+            {
+              "id": "aefe669e-2c8f-47f2-8595-fc299d4ac66b",
+              "name": "post_date",
+              "value": "={{ $('Sort reels by views').item.json.createTimeISO }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2528,
+        752
+      ],
+      "id": "159f772c-2edf-4df2-a6d0-4b7e7b20815f",
+      "name": "Set Fields"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Get Important Details').item.json.sheetUrl }}",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 692614873,
+          "mode": "list",
+          "cachedResultName": "Competitors Reels",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cEsvH3zlLGXiiQi7WYXMYP21HUwaTMlty3H9z5_S4WA/edit#gid=692614873"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Profile Picture": "={{ $json['Profile Picture'] }}",
+            "Video Thumbnail": "==IMAGE(\"{{ $json.thumbnail }}\", 4, 200, 150)",
+            "Username": "={{ $json.Username }}",
+            "Views": "={{ $json.views }}",
+            "Likes": "={{ $json.likes }}",
+            "Comments": "={{ $json.comments }}",
+            "Duration [Seconds]": "={{ $json.duration }}",
+            "Video Script": "={{ $json.content.parts[0].text }}",
+            "Hook": "={{ $json.output.hook }}",
+            "Topic": "={{ $json.output.topic }}",
+            "CTA": "={{ $json.output.cta }}",
+            "Caption": "={{ $json.caption }}",
+            "Video ID": "={{ $json.video_id }}",
+            "Posted Date": "={{ $json.post_date.toDate().toLocaleString(\"en-US\", { month: \"long\", day: \"numeric\", year: \"numeric\", hour: \"2-digit\", minute: \"2-digit\" }) }}",
+            "Video Link": "={{ $json.url }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Profile Picture",
+              "displayName": "Profile Picture",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Video Thumbnail",
+              "displayName": "Video Thumbnail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Video Link",
+              "displayName": "Video Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Username",
+              "displayName": "Username",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Posted Date",
+              "displayName": "Posted Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Views",
+              "displayName": "Views",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Likes",
+              "displayName": "Likes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Comments",
+              "displayName": "Comments",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Duration [Seconds]",
+              "displayName": "Duration [Seconds]",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Video Script",
+              "displayName": "Video Script",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Hook",
+              "displayName": "Hook",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Topic",
+              "displayName": "Topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CTA",
+              "displayName": "CTA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Caption",
+              "displayName": "Caption",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Video ID",
+              "displayName": "Video ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        3168,
+        768
+      ],
+      "id": "7c85d79c-3fe6-4473-a265-58151d11ff6b",
+      "name": "Add Reels data",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "K7ilmsrPH8LOXJbe",
+          "name": "Jayditch Google sheet"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sortFieldsUi": {
+          "sortField": [
+            {
+              "fieldName": "Views",
+              "order": "descending"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.sort",
+      "typeVersion": 1,
+      "position": [
+        3376,
+        768
+      ],
+      "id": "6cddc85c-e2f0-408f-b174-b92569bc00fc",
+      "name": "Sort by views"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ae83c01c-50d9-4a9c-9e9c-9a5a0d3c976c",
+              "leftValue": "={{ $json.Views }}",
+              "rightValue": "={{ $('Get Important Details').item.json.viewsLimit }}",
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        3600,
+        768
+      ],
+      "id": "d176d51b-fd5c-44fb-b076-729cbfcf58d4",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "maxItems": 3
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        3824,
+        768
+      ],
+      "id": "9bb05686-7c79-4927-8c67-3da89d8bc9f7",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "64a02c88-ef06-4c8b-88fd-165d2205a412",
+              "leftValue": "={{$('Get Important Details').item.json.rewrite}}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3840,
+        1040
+      ],
+      "id": "210beded-b1ac-4150-908d-9630a8c33f54",
+      "name": "Rewrite script?"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Get Important Details').item.json.sheetUrl }}",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 294756784,
+          "mode": "list",
+          "cachedResultName": "Scripts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tMeBWJ8yMsoyOIhRZ20_OGVHreV9JtF_7ZVhYLWPDZQ/edit#gid=294756784"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Profile Picture": "={{ $('Sort by views').item.json['Profile Picture'] }}",
+            "Video Link": "={{ $('Filter').item.json['Video Link'] }}",
+            "Posted Date": "={{ $('Rewrite script?').item.json['Posted Date'] }}",
+            "Rewrite Script": "={{ $json.text }}",
+            "Original Script": "={{ $('Rewrite script?').item.json['Video Script'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Profile Picture",
+              "displayName": "Profile Picture",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Video Link",
+              "displayName": "Video Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Posted Date",
+              "displayName": "Posted Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Original Script",
+              "displayName": "Original Script",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Rewrite Script",
+              "displayName": "Rewrite Script",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Script Template",
+              "displayName": "Script Template",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        4912,
+        928
+      ],
+      "id": "249cfc26-6b87-4aa1-9055-59283027bbc0",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "K7ilmsrPH8LOXJbe",
+          "name": "Jayditch Google sheet"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-pro",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        4288,
+        1136
+      ],
+      "id": "516a0f83-5fc9-410c-bbbe-7044ae3ea609",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Ll7p0AxVQUk8XfMS",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        4448,
+        1136
+      ],
+      "id": "6c030d56-162e-4171-93f0-f2a977079763",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "xQPTRvcS0aBdlnaa",
+          "name": "Meedro Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Here is the Script Content:\n{{ $json['Video Script'] }}\n",
+        "needsFallback": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=Rewrite the script strictly into {{ $('Get Important Details').first().json.language }} language.\nFollow these rewrite instructions: {{ $('Get Important Details').first().json.rewriteSetting }}\n\nBefore rewriting, perform these checks:\n\n1. Extract only meaningful spoken text. \n   - Ignore visuals, stage directions, overlays, bracketed notes, and descriptions.\n   - Examples to ignore: (Visual: ...), [Text overlay...], [Scene...], {Shot...}, *actions*, camera notes.\n\n2. After removing those non-verbal elements, evaluate the remaining meaningful text.\n\nValidation Rules:\n- If meaningful spoken content is less than 100 characters → output exactly: Can't analyze less than 100 characters\n- If the input contains mostly visuals, notes, or non-speech elements and has no meaningful text → output exactly: No valid content to rewrite\n- If the text is random, incoherent, or gibberish → output exactly: No valid content to rewrite\n\nRewrite Rules:\n- Output only the rewritten script.\n- No commentary, no explanation.\n"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        4352,
+        928
+      ],
+      "id": "f3ae67e9-dbfa-4afa-96c7-5a0cb6e2b65d",
+      "name": "Rewrite Script",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map(item => {\n  const url = item.json[\"Profile Link\"] || \"\";\n\n  // Regex to capture username (ignores query params or trailing slashes)\n  const match = url.match(/tiktok\\.com\\/([^/?#]+)/i);\n  const extratedUsername = match ? match[1] : null;\n\n  return {\n    json: {\n      ...item.json,\n      extratedUsername\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        432,
+        720
+      ],
+      "id": "0f1423b3-b80d-42ad-8aa2-c68f4e82d091",
+      "name": "Extract Username from TikTok link"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json[\"Profile Link\"] }}",
+                    "rightValue": "www.tiktok.com/",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    },
+                    "id": "6f460e47-a54a-429c-891f-c2e0c63f5a08"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "5110bc75-e622-4f3e-8049-0f7824af12a8",
+                    "leftValue": "={{ $json[\"Profile Link\"] }}",
+                    "rightValue": "www.instagram.com/",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -80,
+        1408
+      ],
+      "id": "09932dcd-a8e9-48ae-8a00-53001bace7e3",
+      "name": "Identify Social Media Platform"
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map(item => {\n  const url = item.json[\"Profile Link\"] || \"\";\n\n  // Regex to capture username (ignores query params or trailing slashes)\n  const match = url.match(/instagram\\.com\\/([^/?#]+)/i);\n  const extratedUsername = match ? match[1] : null;\n\n  return {\n    json: {\n      ...item.json,\n      extratedUsername\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        304,
+        2016
+      ],
+      "id": "33ee5429-1b7d-45ff-850c-ebdb18928294",
+      "name": "Extract Username from IG link"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "bbbd1ab7-c515-4aaa-a104-af485b0f5a18",
+              "leftValue": "={{ $json.statusCode }}",
+              "rightValue": 400,
+              "operator": {
+                "type": "number",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        960,
+        2016
+      ],
+      "id": "a5e7351f-ad5b-40b8-9948-88481e281b49",
+      "name": "does exist?"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "Username does not exist",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1392,
+        2112
+      ],
+      "id": "e4d16f4f-7afc-47a3-8fa3-af6cd03af206",
+      "name": "Respond to invalid username"
+    },
+    {
+      "parameters": {
+        "graphApiVersion": "v22.0",
+        "node": "17841467514402068",
+        "options": {
+          "fields": {
+            "field": [
+              {
+                "name": "=business_discovery.username({{ $json.extratedUsername }}){followers_count,media_count,username,website,name,ig_id,profile_picture_url,biography,follows_count}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        528,
+        2016
+      ],
+      "id": "66b62ff2-7e62-4284-ba4f-58f563ee75f9",
+      "name": "Check if username exist",
+      "retryOnFail": false,
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "pQ1ED3mvJzSvACHQ",
+          "name": "Facebook Graph account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.business_discovery.profile_picture_url }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1392,
+        1920
+      ],
+      "id": "7ac7f1fd-80b0-40b3-b729-2b3e040b1541",
+      "name": "Download profile picture1"
+    },
+    {
+      "parameters": {
+        "name": "=profile_picture_{{ $json.business_discovery.id }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Get Important Details').item.json.googleDriveLink }}"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1616,
+        1920
+      ],
+      "id": "31c5c4ae-86fe-4dc3-949e-f0cad307d064",
+      "name": "Upload Profile Picture1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "oICXEPJ2yTPSAFUF",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Get Important Details').item.json.sheetUrl }}",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 69853265,
+          "mode": "list",
+          "cachedResultName": "Competitors",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tMeBWJ8yMsoyOIhRZ20_OGVHreV9JtF_7ZVhYLWPDZQ/edit#gid=69853265"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Profile Link": "={{ $('Extract Username from IG link').item.json['Profile Link'] }}",
+            "Username": "={{ $('Check if username exist').item.json.business_discovery.username }}",
+            "Name": "={{ $('Check if username exist').item.json.business_discovery.name }}",
+            "Bio": "={{ $('Check if username exist').item.json.business_discovery.biography }}",
+            "Followers": "={{ $('Check if username exist').item.json.business_discovery.followers_count }}",
+            "Following": "={{ $('Check if username exist').item.json.business_discovery.follows_count }}",
+            "Media Count": "={{ $('Check if username exist').item.json.business_discovery.media_count }}",
+            "Profile Picture": "==IMAGE(\"{{ $json.webContentLink }}\", 4, 80, 80)"
+          },
+          "matchingColumns": [
+            "Profile Link"
+          ],
+          "schema": [
+            {
+              "id": "Profile Picture",
+              "displayName": "Profile Picture",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Username",
+              "displayName": "Username",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Bio",
+              "displayName": "Bio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Followers",
+              "displayName": "Followers",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Following",
+              "displayName": "Following",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Media Count",
+              "displayName": "Media Count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Profile Link",
+              "displayName": "Profile Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Last Post Date",
+              "displayName": "Last Post Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Track Creator",
+              "displayName": "Track Creator",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        1840,
+        1920
+      ],
+      "id": "43f6f34c-f1ce-42ce-ba39-c59761789b56",
+      "name": "Update latest info competitors1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "K7ilmsrPH8LOXJbe",
+          "name": "Jayditch Google sheet"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "Run actor and get dataset",
+        "actorId": {
+          "__rl": true,
+          "value": "xMc5Ga1oCONPmWJIa",
+          "mode": "list",
+          "cachedResultName": "Instagram Reel Scraper (apify/instagram-reel-scraper)",
+          "cachedResultUrl": "https://console.apify.com/actors/xMc5Ga1oCONPmWJIa/input"
+        },
+        "customBody": "={\n    \"username\": [\"{{ $json.Username }}\"],\n  \"resultsType\": \"posts\",\n  \"isUserReelFeedURL\":true,\n  \"resultsLimit\": {{ $('Get Important Details').item.json.reelsLimit }},\n  \"onlyPostsNewerThan\": \"{{ $('Get Competitor/s').item.json['Last Post Date'] }}\"\n}",
+        "timeout": 300
+      },
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        2064,
+        1920
+      ],
+      "id": "d974dcf3-db98-4bb9-a624-44fb82c76183",
+      "name": "Get Reels1",
+      "retryOnFail": true,
+      "executeOnce": false,
+      "credentials": {
+        "apifyApi": {
+          "id": "J83Y7i4pDuFFO7GI",
+          "name": "Apify account [j.balansi]"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "fcae84d1-e173-4a35-9ee0-e5b70ed54d0a",
+              "leftValue": "={{ $json.videoPlayCount }}",
+              "rightValue": "={{ $('Get Important Details').item.json.viewsLimit }}",
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        2544,
+        1920
+      ],
+      "id": "aa358175-0b1f-47f2-854b-7453b6b43bc2",
+      "name": "Filter by views1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "965cfaa7-b416-4dbc-9e94-fe0fa9c1dce5",
+              "leftValue": "={{$json}}",
+              "rightValue": "test",
+              "operator": {
+                "type": "object",
+                "operation": "empty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "ea3c78fa-8aed-4536-90be-231f2f2e9d95",
+              "leftValue": "={{ $('Get Reels1').item.json.error }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2336,
+        1904
+      ],
+      "id": "49a29b41-e806-4fb3-ae5f-36c6c3211fe0",
+      "name": "Check if empty1"
+    },
+    {
+      "parameters": {
+        "sortFieldsUi": {
+          "sortField": [
+            {
+              "fieldName": "videoPlayCount",
+              "order": "descending"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.sort",
+      "typeVersion": 1,
+      "position": [
+        2736,
+        1920
+      ],
+      "id": "be3a9d9d-afa5-402e-9d6b-a015624c04bd",
+      "name": "Sort reels by views1"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.images[0] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2976,
+        1712
+      ],
+      "id": "67e174ae-ab9f-41ba-8a5b-39d45440bccf",
+      "name": "Download Thumbnail1"
+    },
+    {
+      "parameters": {
+        "name": "=thumbnail_{{ $json.id }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Get Important Details').item.json.googleDriveLink }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        3296,
+        1712
+      ],
+      "id": "f07081ab-1c3c-4c9e-ab4e-78faf7f0cdcf",
+      "name": "Upload Thumbnail1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "oICXEPJ2yTPSAFUF",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "text": "=# ROLE\nYou are a social media content analyst who understands Instagram/TikTok format videos.\n\n# TASK\nWatch this video and extract a raw content breakdown that captures what makes this video work.\n\n# INSTRUCTIONS\n\nSTEP 1: Identify the video format\n- Does the video have a VISUAL STRUCTURE (split screen, side-by-side comparison, grid layout, before/after)?\n- If YES → This is visual-driven, describe the structure FIRST\n- Does the video have a COMEDIC/MEME TEXT OVERLAY that frames the joke or concept?\n- If YES → This is meme-format, put the text overlay FIRST\n\nSTEP 2: Format your breakdown accordingly\n\nFor VISUAL COMPARISON/STRUCTURE videos (split screens, side-by-side, progressions):\n- START with overall visual structure description (e.g., \"Three-way split screen with...\")\n- Then provide dialogue and visual details for each section\n\nFormat:\n[Overall visual structure: describe the layout/format]\n\n\"Dialogue line 1\"\n[Visual details for this segment]\n\n\"Dialogue line 2\"\n[Visual details for this segment]\n\nFor SCRIPT-DRIVEN videos (someone talking, no visual structure):\n- Transcribe the spoken words\n- Include visual descriptions only as supporting context\n\nFormat:\n\"Transcribe the narration...\"\n[Visual descriptions as context]\n\nFor VISUAL MONTAGE videos (cinematic shots, lifestyle content):\n- Describe shot-by-shot\n- Note on-screen text overlays\n- Mark background audio: Audio: [song playing] or Audio: [trending sound]\n\nFormat:\n[Shot 1 description]\nText: \"any on-screen text\"\n[Shot 2 description]\nAudio: [background audio description]\n\nFor MEME/COMEDY FORMAT videos (text overlay framing a joke/concept):\n- START with the text overlay\n- Then describe the visual content and audio\n\nFormat:\nText: \"the meme caption or comedic framing\"\n\n[Visual description of what's happening]\nAudio: [background audio description]\n\nCRITICAL: Distinguish between actual content and background audio:\n- Generic motivational speech/trending sounds disconnected from visuals → background audio\n- Song lyrics → background music\n- Specific narration explaining what's shown → main content\n- Audio directly referencing on-screen elements → main content\n\n# OUTPUT CONSTRAINTS\n- Target output ~2000 characters (prioritize only the most important elements)\n- Plain text, no timestamps\n- No commentary, just content breakdown\n- Capture what actually makes the video engaging\n\n# OUTPUT FORMAT\nStart immediately with the breakdown",
+        "videoUrls": "={{ $json.videoUrl }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        2992,
+        1888
+      ],
+      "id": "4c6e5716-a87f-41d1-9de6-a11734f22dd5",
+      "name": "Transcribe Video1",
+      "retryOnFail": true,
+      "waitBetweenTries": 1000,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Ll7p0AxVQUk8XfMS",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Transcript:\n{{ $json.content.parts[0].text }}",
+        "hasOutputParser": true,
+        "needsFallback": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=**Your role:**\nYou are an AI agent that acts as an expert Instagram strategist and short-form content analyst.\nYour job is to analyze a provided transcript **from a single Instagram Reel or TikTok video**.\n\n---\n\n# ✅ **Your Tasks:**\n\nExtract **three things only**:\n\n### **1. HOOK**\n\n* Identify the first spoken or visually implied sentence intended to grab attention.\n* Usually appears in the first 1–3 seconds.\n* If unclear, choose the earliest phrase that serves as the attention-grabber.\n\n### **2. TOPIC**\n\n* Identify the main subject, lesson, story, or value the video focuses on.\n* Summarize the topic in **1 single sentence**, max 20 words.\n\n### **3. CALL TO ACTION (CTA)**\n\n* Identify any direct or implied CTA.\n* Examples: \"follow for more\", \"save this\", \"comment below\", \"click the link\", or behavior-based CTAs like \"try this\".\n\n### **4. POWER WORDS**\n\nExtract **1 to 3 high-impact words or phrases** found **within the hook** that create emotional pull, urgency, curiosity, or promise.\n\n---\n\n# ✅ **Strict Output Format (JSON only)**\n\nReturn your answer **ONLY** as valid JSON:\n\n{\n  \"hook\": \"[insert hook]\",\n  \"power_words\": [\"word or phrase 1\", \"word or phrase 2\", \"word or phrase 3\"],\n  \"topic\": \"[insert topic]\",\n  \"cta\": \"[insert CTA]\"\n}\n\n"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        3360,
+        2128
+      ],
+      "id": "6b43e97b-7472-4440-aecb-becb0d072534",
+      "name": "Hook Analyzer",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        3408,
+        2352
+      ],
+      "id": "963dd36c-5147-47dd-bb8f-90f88dbced79",
+      "name": "Google Gemini Chat Model2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Ll7p0AxVQUk8XfMS",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        3536,
+        2352
+      ],
+      "id": "3e3176de-a0d6-495d-895c-a27dbff399e0",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "xQPTRvcS0aBdlnaa",
+          "name": "Meedro Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"hook\": \"[insert hook]\",\n  \"power_words\": [\"word or phrase 1\", \"word or phrase 2\", \"word or phrase 3\"],\n  \"topic\": \"[insert topic]\",\n  \"cta\": \"[insert CTA or \\\"None\\\"]\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        3664,
+        2352
+      ],
+      "id": "2fbd9aa3-cf89-486c-95d3-63fabf12378d",
+      "name": "Structured Output Parser2"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "numberInputs": 3,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        4080,
+        1872
+      ],
+      "id": "a5a54267-311a-4e73-9d94-d03ad0b1e6d9",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8f29f01f-fa89-4a6c-8ed9-9b216dd722a8",
+              "name": "caption",
+              "value": "={{ $('Sort reels by views1').item.json.caption }}",
+              "type": "string"
+            },
+            {
+              "id": "4a82add2-86aa-418b-a8dc-bbfb809f658e",
+              "name": "url",
+              "value": "={{ $('Sort reels by views1').item.json.url }}",
+              "type": "string"
+            },
+            {
+              "id": "c9f9b9a0-d960-4411-b5cc-b3c14f446f95",
+              "name": "thumbnail",
+              "value": "={{ $json.webContentLink }}",
+              "type": "string"
+            },
+            {
+              "id": "43d1ad8f-f704-4cf6-84b0-9cad874c87d7",
+              "name": "views",
+              "value": "={{ $('Sort reels by views1').item.json.videoPlayCount }}",
+              "type": "number"
+            },
+            {
+              "id": "282f8501-f8e7-46ed-9b53-4b6a57e312ca",
+              "name": "likes",
+              "value": "={{ $('Sort reels by views1').item.json.likesCount }}",
+              "type": "number"
+            },
+            {
+              "id": "60cf95cd-8cf3-4e53-a9f8-879c1abbcfac",
+              "name": "comments",
+              "value": "={{ $('Sort reels by views1').item.json.commentsCount }}",
+              "type": "string"
+            },
+            {
+              "id": "883ee975-e482-4db1-bbea-c30c3dd388fb",
+              "name": "post_date",
+              "value": "={{ $('Sort reels by views1').item.json.timestamp.split(\"T\")[0] }}",
+              "type": "string"
+            },
+            {
+              "id": "166ea6c5-af29-4e31-8a99-586423dcc266",
+              "name": "video_id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "ad4d6812-b2df-4f59-b2f7-ad0da3305de3",
+              "name": "username",
+              "value": "={{ $('Sort reels by views1').item.json.ownerUsername }}",
+              "type": "string"
+            },
+            {
+              "id": "74cdc215-6564-41fc-b0c4-c3bfb68ae554",
+              "name": "duration",
+              "value": "={{ $('Sort reels by views1').item.json.videoDuration }}",
+              "type": "string"
+            },
+            {
+              "id": "aefe669e-2c8f-47f2-8595-fc299d4ac66b",
+              "name": "post_date",
+              "value": "={{ $('Sort reels by views1').item.json.timestamp }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3536,
+        1712
+      ],
+      "id": "ff21fbaa-3266-4ea3-8c44-49313fb9bb6c",
+      "name": "Set Fields1"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Get Important Details').item.json.sheetUrl }}",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 692614873,
+          "mode": "list",
+          "cachedResultName": "Competitors Reels",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CFXxuPOz8WmOZPRlrzmtDI7YQI1i5-g22w6UNiN-g9M/edit#gid=692614873"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Profile Picture": "==IMAGE(\"{{ $('Upload Profile Picture1').item.json.webContentLink }}\", 4, 80, 80)",
+            "Video Thumbnail": "==IMAGE(\"{{ $json.thumbnail }}\", 4, 200, 150)",
+            "Username": "={{ $json.username }}",
+            "Views": "={{ $json.views }}",
+            "Likes": "={{ $json.likes }}",
+            "Comments": "={{ $json.comments }}",
+            "Duration [Seconds]": "={{ $json.duration }}",
+            "Caption": "={{ $json.caption }}",
+            "Video ID": "={{ $json.video_id }}",
+            "Video Script": "={{ $json.content.parts[0].text }}",
+            "Hook": "={{ $json.output.hook }}",
+            "Topic": "={{ $json.output.topic }}",
+            "CTA": "={{ $json.output.cta }}",
+            "Video Link": "={{ $json.url }}",
+            "Posted Date": "={{ $json.post_date.toDate().toLocaleString(\"en-US\", { month: \"long\", day: \"numeric\", year: \"numeric\", hour: \"2-digit\", minute: \"2-digit\" }) }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Profile Picture",
+              "displayName": "Profile Picture",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Video Thumbnail",
+              "displayName": "Video Thumbnail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Video Link",
+              "displayName": "Video Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Username",
+              "displayName": "Username",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Posted Date",
+              "displayName": "Posted Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Views",
+              "displayName": "Views",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Likes",
+              "displayName": "Likes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Comments",
+              "displayName": "Comments",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Duration [Seconds]",
+              "displayName": "Duration [Seconds]",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Video Script",
+              "displayName": "Video Script",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Hook",
+              "displayName": "Hook",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Topic",
+              "displayName": "Topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CTA",
+              "displayName": "CTA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Caption",
+              "displayName": "Caption",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Video ID",
+              "displayName": "Video ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        4304,
+        1888
+      ],
+      "id": "9cfe2b4e-5784-41b7-8c54-71aedd0b5c87",
+      "name": "Add Reels data1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "K7ilmsrPH8LOXJbe",
+          "name": "Jayditch Google sheet"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sortFieldsUi": {
+          "sortField": [
+            {
+              "fieldName": "Views",
+              "order": "descending"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.sort",
+      "typeVersion": 1,
+      "position": [
+        4736,
+        1888
+      ],
+      "id": "d5b6060f-7d33-4f92-8c40-19ca02567385",
+      "name": "Sort by views1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ae83c01c-50d9-4a9c-9e9c-9a5a0d3c976c",
+              "leftValue": "={{ $json.Views }}",
+              "rightValue": "={{ $('Get Important Details').item.json.viewsLimit }}",
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        4960,
+        1888
+      ],
+      "id": "9660592f-8938-42e9-a390-f2e55fb42071",
+      "name": "Filter1"
+    },
+    {
+      "parameters": {
+        "maxItems": 3
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        5184,
+        1888
+      ],
+      "id": "70859132-e577-4617-a8d3-28b1c2805ccb",
+      "name": "Limit1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "64a02c88-ef06-4c8b-88fd-165d2205a412",
+              "leftValue": "={{$('Get Important Details').item.json.rewrite}}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        5184,
+        2112
+      ],
+      "id": "f72ff5e2-33f2-48e5-b2ca-73d286ec9b6a",
+      "name": "Rewrite script?1"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Get Important Details').item.json.sheetUrl }}",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 294756784,
+          "mode": "list",
+          "cachedResultName": "Scripts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tMeBWJ8yMsoyOIhRZ20_OGVHreV9JtF_7ZVhYLWPDZQ/edit#gid=294756784"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Rewrite Script": "={{ $json.text }}",
+            "Profile Picture": "={{ $('Sort by views1').item.json['Profile Picture'] }}",
+            "Posted Date": "={{ $('Rewrite script?1').item.json['Posted Date'] }}",
+            "Original Script": "={{ $('Sort by views1').item.json['Video Script'] }}",
+            "Video Link": "={{ $('Rewrite script?1').item.json['Video Link'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Profile Picture",
+              "displayName": "Profile Picture",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Video Link",
+              "displayName": "Video Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Posted Date",
+              "displayName": "Posted Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Original Script",
+              "displayName": "Original Script",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Rewrite Script",
+              "displayName": "Rewrite Script",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Script Template",
+              "displayName": "Script Template",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        6192,
+        2128
+      ],
+      "id": "e970441b-923f-49d5-b096-e7c26363318d",
+      "name": "Append row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "K7ilmsrPH8LOXJbe",
+          "name": "Jayditch Google sheet"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        5632,
+        2352
+      ],
+      "id": "3a98fbaf-dd2a-4e78-9fa2-d464ad37f466",
+      "name": "Google Gemini Chat Model3",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Ll7p0AxVQUk8XfMS",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        5760,
+        2352
+      ],
+      "id": "31b4d289-c97b-487d-ad63-7e980896dbbe",
+      "name": "OpenAI Chat Model3",
+      "credentials": {
+        "openAiApi": {
+          "id": "xQPTRvcS0aBdlnaa",
+          "name": "Meedro Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Here is the Script Content:\n{{ $json['Video Script'] }}\n",
+        "needsFallback": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=Rewrite the script strictly into {{ $('Get Important Details').first().json.language }} language.\nFollow these rewrite instructions: {{ $('Get Important Details').first().json.rewriteSetting }}\n\nBefore rewriting, perform these checks:\n\n1. Extract only meaningful spoken text. \n   - Ignore visuals, stage directions, overlays, bracketed notes, and descriptions.\n   - Examples to ignore: (Visual: ...), [Text overlay...], [Scene...], {Shot...}, *actions*, camera notes.\n\n2. After removing those non-verbal elements, evaluate the remaining meaningful text.\n\nValidation Rules:\n- If meaningful spoken content is less than 100 characters → output exactly: Can't analyze less than 100 characters\n- If the input contains mostly visuals, notes, or non-speech elements and has no meaningful text → output exactly: No valid content to rewrite\n- If the text is random, incoherent, or gibberish → output exactly: No valid content to rewrite\n\nRewrite Rules:\n- Output only the rewritten script.\n- No commentary, no explanation.\n"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        5616,
+        2128
+      ],
+      "id": "8991c729-bf9b-4f54-aa26-5bd285b96ea9",
+      "name": "Rewrite Script1",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "content": "# TIKTOK RESEARCH\n",
+        "height": 1088,
+        "width": 5440,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        288,
+        432
+      ],
+      "typeVersion": 1,
+      "id": "1a1411a1-8562-4cc9-b997-f9ab7c243501",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "# INSTAGRAM RESEARCH",
+        "height": 976,
+        "width": 6528,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        256,
+        1664
+      ],
+      "typeVersion": 1,
+      "id": "124e1ac0-f71f-4659-af20-67a4dc032946",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        6432,
+        2352
+      ],
+      "id": "7be3b125-b820-4412-9507-c38af8fd2a67",
+      "name": "Google Gemini Chat Model4",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Ll7p0AxVQUk8XfMS",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        6560,
+        2352
+      ],
+      "id": "5237965b-28a3-47c6-bf5c-0f8389559860",
+      "name": "OpenAI Chat Model4",
+      "credentials": {
+        "openAiApi": {
+          "id": "xQPTRvcS0aBdlnaa",
+          "name": "Meedro Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Here is the Script Content:\n{{ $('Rewrite script?1').item.json['Video Script'] }}",
+        "needsFallback": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You rewrite scripts into a universal, fill-in-the-blank template.  \nYou must follow these strict rules:\n\n1. Output plain text only.\n2. Do NOT use markdown, asterisks, hashtags, brackets, bullets, bold, italics, or any special characters.\n3. No emojis.\n4. Keep the structure and flow of the original script, but rewrite it as a general template that can fit any niche.\n5. Replace niche-specific details with placeholders in ALL CAPS like: [TOPIC], [HOOK], [SCENE], [CTA], [DETAIL].\n6. Do not add commentary.\n7. Do not include examples unless they are placeholders.\n\nValidation rules:\n- If input text is less than 100 characters, output exactly: Can't analyze less than 100 characters\n- If the content is meaningless, random, or gibberish, output exactly: No valid content to rewrite\n"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        6416,
+        2128
+      ],
+      "id": "b31c4ead-e682-4c0f-9a49-921a3f0255f1",
+      "name": "Rewrite to Generic Script",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        5328,
+        1168
+      ],
+      "id": "3b3b114e-6be7-4816-80de-23fa43fb01e8",
+      "name": "Google Gemini Chat Model5",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Ll7p0AxVQUk8XfMS",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        5440,
+        1152
+      ],
+      "id": "31e41df6-83f5-4231-939c-235e482522a7",
+      "name": "OpenAI Chat Model5",
+      "credentials": {
+        "openAiApi": {
+          "id": "xQPTRvcS0aBdlnaa",
+          "name": "Meedro Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Rewrite this script into a fill-in-the-blank template while keeping the original format and flow.\n\n\nScript to process:\n{{ $('Rewrite script?').item.json['Video Script'] }}",
+        "needsFallback": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You rewrite scripts into a universal, fill-in-the-blank template.  \nYou must follow these strict rules:\n\n1. Output plain text only.\n2. Do NOT use markdown, asterisks, hashtags, brackets, bullets, bold, italics, or any special characters.\n3. No emojis.\n4. Keep the structure and flow of the original script, but rewrite it as a general template that can fit any niche.\n5. Replace niche-specific details with placeholders in ALL CAPS like: [TOPIC], [HOOK], [SCENE], [CTA], [DETAIL].\n6. Do not add commentary.\n7. Do not include examples unless they are placeholders.\n\nValidation rules:\n- If input text is less than 100 characters, output exactly: Can't analyze less than 100 characters\n- If the content is meaningless, random, or gibberish, output exactly: No valid content to rewrite\n"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        5136,
+        928
+      ],
+      "id": "bedc9c72-7ad5-41a6-a993-9207d48698ea",
+      "name": "Rewrite to Generic Script1",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Get Important Details').item.json.sheetUrl }}",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 294756784,
+          "mode": "list",
+          "cachedResultName": "Scripts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tMeBWJ8yMsoyOIhRZ20_OGVHreV9JtF_7ZVhYLWPDZQ/edit#gid=294756784"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Video Link": "={{ $('Append row in sheet').item.json['Video Link'] }}",
+            "Script Template": "={{ $json.text }}"
+          },
+          "matchingColumns": [
+            "Video Link"
+          ],
+          "schema": [
+            {
+              "id": "Profile Picture",
+              "displayName": "Profile Picture",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Video Link",
+              "displayName": "Video Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Posted Date",
+              "displayName": "Posted Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Original Script",
+              "displayName": "Original Script",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Rewrite Script",
+              "displayName": "Rewrite Script",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Script Template",
+              "displayName": "Script Template",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        5488,
+        928
+      ],
+      "id": "55f280b3-ab0f-4a93-8699-58eb2b8c2bc6",
+      "name": "Update row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "K7ilmsrPH8LOXJbe",
+          "name": "Jayditch Google sheet"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Get Important Details').item.json.sheetUrl }}",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 294756784,
+          "mode": "list",
+          "cachedResultName": "Scripts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tMeBWJ8yMsoyOIhRZ20_OGVHreV9JtF_7ZVhYLWPDZQ/edit#gid=294756784"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Video Link": "={{ $('Append row in sheet1').item.json['Video Link'] }}",
+            "Script Template": "={{ $json.text }}"
+          },
+          "matchingColumns": [
+            "Video Link"
+          ],
+          "schema": [
+            {
+              "id": "Profile Picture",
+              "displayName": "Profile Picture",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Video Link",
+              "displayName": "Video Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Posted Date",
+              "displayName": "Posted Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Original Script",
+              "displayName": "Original Script",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Rewrite Script",
+              "displayName": "Rewrite Script",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Script Template",
+              "displayName": "Script Template",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        6768,
+        2128
+      ],
+      "id": "efbb6338-f636-4634-a18d-7c58cb450965",
+      "name": "Update row in sheet2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "K7ilmsrPH8LOXJbe",
+          "name": "Jayditch Google sheet"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "467ffb94-e098-4a02-8dbe-0e1389519248",
+              "leftValue": "={{ $json.videoMeta.duration }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        1328,
+        848
+      ],
+      "id": "a87bb367-1b35-4eae-bf43-3ae1fc50766a",
+      "name": "Filter out Slide show Pictures"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "fcae84d1-e173-4a35-9ee0-e5b70ed54d0a",
+              "leftValue": "={{ $json.playCount }}",
+              "rightValue": "={{ $('Get Important Details').item.json.viewsLimit }}",
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        1040,
+        848
+      ],
+      "id": "96a8b3df-b992-4ce5-9755-3678492e82f2",
+      "name": "Filter by number views"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "da994d1c-47af-4840-a92e-fcdce3102282",
+              "leftValue": "={{ $json[\"Video Script\"].length }}",
+              "rightValue": 110,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        4096,
+        944
+      ],
+      "id": "803cacdc-0a08-40de-b88b-249d8989d45a",
+      "name": "Filter out no scripts"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8cf9a6d4-b166-4024-bec4-d98323d46532",
+              "leftValue": "={{ $json.text }}",
+              "rightValue": "Can't analyze less than 100 characters",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        4704,
+        928
+      ],
+      "id": "24dfae6d-405b-4993-827f-c405e392f52a",
+      "name": "Filter out Scripts"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "da994d1c-47af-4840-a92e-fcdce3102282",
+              "leftValue": "={{ $json[\"Video Script\"].length }}",
+              "rightValue": 110,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        5392,
+        2128
+      ],
+      "id": "898e9a93-ab83-4fba-9312-42edcb76da25",
+      "name": "Filter out no scripts1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8cf9a6d4-b166-4024-bec4-d98323d46532",
+              "leftValue": "={{ $json.text }}",
+              "rightValue": "Can't analyze less than 100 characters",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        5968,
+        2128
+      ],
+      "id": "b3e4a9aa-2d3e-4760-8885-9115d15b6275",
+      "name": "Filter out Scripts1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook Record ID": {
+      "main": [
+        [
+          {
+            "node": "Validate Record ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook Request ID": {
+      "main": [
+        [
+          {
+            "node": "Validate Request ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Request ID": {
+      "main": [
+        [
+          {
+            "node": "is valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Record ID": {
+      "main": [
+        [
+          {
+            "node": "is valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "is valid?": {
+      "main": [
+        [
+          {
+            "node": "Identify type",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond invalid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search records": {
+      "main": [
+        [
+          {
+            "node": "Get Important Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Identify type": {
+      "main": [
+        [
+          {
+            "node": "Search records",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get a record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a record": {
+      "main": [
+        [
+          {
+            "node": "Get Important Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Important Details": {
+      "main": [
+        [
+          {
+            "node": "Get Competitor/s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Competitor/s": {
+      "main": [
+        [
+          {
+            "node": "Compute Credits",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compute Credits": {
+      "main": [
+        [
+          {
+            "node": "Validate Credits",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Credits": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message - not enough credit",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Create a record - not enough credit limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Identify Social Media Platform",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download profile picture": {
+      "main": [
+        [
+          {
+            "node": "Upload Profile Picture",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Profile Picture": {
+      "main": [
+        [
+          {
+            "node": "Update latest info competitors",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update latest info competitors": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Reels": {
+      "main": [
+        [
+          {
+            "node": "Filter by number views",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Download profile picture",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check if empty": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Sort reels by views",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sort reels by views": {
+      "main": [
+        [
+          {
+            "node": "Download Thumbnail",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Transcribe Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Thumbnail": {
+      "main": [
+        [
+          {
+            "node": "Upload Thumbnail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Thumbnail": {
+      "main": [
+        [
+          {
+            "node": "Set Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe Video": {
+      "main": [
+        [
+          {
+            "node": "Hook Analyzer1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Hook Analyzer1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Hook Analyzer1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Hook Analyzer1",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "summarize": {
+      "main": [
+        [
+          {
+            "node": "Create a record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a record": {
+      "main": [
+        [
+          {
+            "node": "Update record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "summarize",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "summarize1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "summarize1": {
+      "main": [
+        [
+          {
+            "node": "Create a record2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a record2": {
+      "main": [
+        [
+          {
+            "node": "Update record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Hook Analyzer1",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Add Reels data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Fields": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Add Reels data": {
+      "main": [
+        [
+          {
+            "node": "Sort by views",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sort by views": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Rewrite script?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rewrite script?": {
+      "main": [
+        [
+          {
+            "node": "Filter out no scripts",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Rewrite to Generic Script1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Rewrite Script",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Rewrite Script",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Rewrite Script": {
+      "main": [
+        [
+          {
+            "node": "Filter out Scripts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Username from TikTok link": {
+      "main": [
+        [
+          {
+            "node": "Get Reels",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Identify Social Media Platform": {
+      "main": [
+        [
+          {
+            "node": "Extract Username from TikTok link",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract Username from IG link",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Username from IG link": {
+      "main": [
+        [
+          {
+            "node": "Check if username exist",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "does exist?": {
+      "main": [
+        [
+          {
+            "node": "Download profile picture1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to invalid username",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check if username exist": {
+      "main": [
+        [
+          {
+            "node": "does exist?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download profile picture1": {
+      "main": [
+        [
+          {
+            "node": "Upload Profile Picture1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Profile Picture1": {
+      "main": [
+        [
+          {
+            "node": "Update latest info competitors1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update latest info competitors1": {
+      "main": [
+        [
+          {
+            "node": "Get Reels1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Reels1": {
+      "main": [
+        [
+          {
+            "node": "Check if empty1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter by views1": {
+      "main": [
+        [
+          {
+            "node": "Sort reels by views1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check if empty1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Filter by views1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sort reels by views1": {
+      "main": [
+        [
+          {
+            "node": "Download Thumbnail1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Transcribe Video1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Thumbnail1": {
+      "main": [
+        [
+          {
+            "node": "Upload Thumbnail1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Thumbnail1": {
+      "main": [
+        [
+          {
+            "node": "Set Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe Video1": {
+      "main": [
+        [
+          {
+            "node": "Hook Analyzer",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Hook Analyzer": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Hook Analyzer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Hook Analyzer",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser2": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Hook Analyzer",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Add Reels data1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Fields1": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Reels data1": {
+      "main": [
+        [
+          {
+            "node": "Sort by views1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sort by views1": {
+      "main": [
+        [
+          {
+            "node": "Filter1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter1": {
+      "main": [
+        [
+          {
+            "node": "Limit1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit1": {
+      "main": [
+        [
+          {
+            "node": "Rewrite script?1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rewrite script?1": {
+      "main": [
+        [
+          {
+            "node": "Filter out no scripts1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Rewrite Script1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Rewrite Script1",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Rewrite Script1": {
+      "main": [
+        [
+          {
+            "node": "Filter out Scripts1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Rewrite to Generic Script",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model4": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Rewrite to Generic Script",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model4": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Rewrite to Generic Script",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Rewrite to Generic Script": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model5": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Rewrite to Generic Script1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model5": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Rewrite to Generic Script1",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Rewrite to Generic Script1": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter out Slide show Pictures": {
+      "main": [
+        [
+          {
+            "node": "Check if empty",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter by number views": {
+      "main": [
+        [
+          {
+            "node": "Filter out Slide show Pictures",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter out no scripts": {
+      "main": [
+        [
+          {
+            "node": "Rewrite Script",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter out Scripts": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter out no scripts1": {
+      "main": [
+        [
+          {
+            "node": "Rewrite Script1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter out Scripts1": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "2a05d154-098d-4691-a6ca-b7b9acc5e3a3",
+  "meta": {
+    "instanceId": "d348a0e148a8ea7be35c871b5a21be8a919911e22c73847f2c47aebd43ca2ea8"
+  },
+  "id": "2TimwOQ7KywIZAdM",
+  "tags": []
+}
